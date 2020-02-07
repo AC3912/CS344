@@ -101,7 +101,7 @@ bool IsGraphFull(struct room *roomArray[]){
 	for(i = 0; i < 7; i ++){
 		printf("Entered for loop for IsGraphFull\n"); fflush(stdout); //comment out
 		printf("number of Connections: %d\n", roomArray[i]->numberOfConnections); fflush(stdout); //comment out
-		if(roomArray[i]->numberOfConnections < 3){
+		if(roomArray[i]->numberOfConnections < 4){
 			printf("Connections not > 3\n"); fflush(stdout); //comment out
 			return false;
 		}
