@@ -49,18 +49,20 @@ void initializeRoom(struct room *Room, char *name, char *type){
 //Create room array and fill with struct name and type	
 void createRoom(struct room *roomsArray[], char *roomNames[], char *roomType[]){
 	printf("Entering createRoom function\n"); fflush(stdout); //comment out
+
 	int typeOfRoom;
 	int nameOfRoom;
+
 	//create array of rooms selected 
 	int selectedRooms[7] = {0,0,0,0,0,0,0};	
 	printf("Initialized array of rooms\n"); fflush(stdout); //comment out
 
 	//create the 7 rooms for the game
-	int i;
+	int i = 0;
 	while(i < 7){
 		printf("Entered while loop for createRoom function.\n"); fflush(stdout);
 		typeOfRoom = -1;
-		//roomsArray[i] = malloc(sizeof(struct room));
+		roomsArray[i] = malloc(sizeof(struct room));
 		//if(roomsArray[i] == NULL){
 		//	printf("Memory not allocated.\n"); fflush(stdout);
 		//}
@@ -78,14 +80,18 @@ void createRoom(struct room *roomsArray[], char *roomNames[], char *roomType[]){
 			typeOfRoom = 2;
 		}
 		printf("typeofRoom set. size of rooms set.\n"); fflush(stdout);
+		
 		//select room names randomly
 		do{
 			nameOfRoom = rand() % 9;
 		}while(selectedRooms[nameOfRoom] == 1);
+
 		//update array
 		selectedRooms[nameOfRoom] = 1;
+
 		//initialize room
 		initializeRoom(roomsArray[i], roomNames[nameOfRoom], roomType[typeOfRoom]);
+		printf("Room %s created.\n", roomNames[nameOfRoom]); fflush(stdout); //comment out
 		i++;
 	}
 	printf("Exiting createRoom function.\n"); fflush(stdout);
@@ -96,10 +102,12 @@ void createRoom(struct room *roomsArray[], char *roomNames[], char *roomType[]){
 //Otherwise, returns false (0).
 bool IsGraphFull(struct room *roomArray[]){
 	printf("Starting check for IsGraphFull\n"); fflush(stdout); //comment out
+
 	int i;
 	printf("Entering for loop for IsGraphFull\n"); fflush(stdout); //comment out
 	for(i = 0; i < 7; i ++){
 		printf("Entered for loop for IsGraphFull\n"); fflush(stdout); //comment out
+		printf("For room %s.\n", roomArray[i]->name); fflush(stdout); //comment out
 		printf("number of Connections: %d\n", roomArray[i]->numberOfConnections); fflush(stdout); //comment out
 		if(roomArray[i]->numberOfConnections < 4){
 			printf("Connections not > 3\n"); fflush(stdout); //comment out
@@ -114,7 +122,7 @@ bool IsGraphFull(struct room *roomArray[]){
 struct room* GetRandomRoom(struct room* roomArray[]){
 	printf("Entered GetRandomRoom function\n"); fflush(stdout); //comment out
 	int i = rand()%7;
-	printf("Room integer is: %d\n", i); fflush(stdout); //comment out
+	printf("Room name is: %s\n", roomArray[i]->name); fflush(stdout); //comment out
 	printf("Exiting GetRandomRoom function.\n"); fflush(stdout); //comment out
 	return roomArray[i];
 }
@@ -138,8 +146,9 @@ bool ConnectionAlreadyExists(struct room* x, struct room* y){
 	int i;
 	for(i = 0; i < 6; i++){
 		printf("Entered for loop for ConnectionAlreadyExists.\n"); fflush(stdout);
+		printf("Room1 name: %s\n", x->name); fflush(stdout);
 		printf("Room2 name: %s\n", y->name); fflush(stdout);
-		printf("Room1 name: %s\n", x->connections[i]);
+		//printf("Room1 name: %s\n", x->connections[i]);
 		if(x->connections[i] == NULL){
 			return false;
 		}
@@ -157,8 +166,20 @@ bool ConnectionAlreadyExists(struct room* x, struct room* y){
 //One way connection rooms x and y together. Does not check for valid connection
 //from 2.2 Program Outlining in Program 2
 void ConnectRoom(struct room *x, struct room *y){
-	x->connections[x->numberOfConnections] = y;
+	printf("Entered ConnectRoom function\n"); fflush(stdout);
+	printf("Room1 to connect is %s\n", x->name); fflush(stdout);
+	printf("Room2 to connect is %s\n", y->name); fflush(stdout);
+	printf("x # of connections b4 connecting: %d\n", x->numberOfConnections);
+	printf("y # of connections b4 connecting: %d\n", y->numberOfConnections);
+	//x->connections[x->numberOfConnections] = y;
+	int c = 0;
+	while(x->connections[c] != NULL && c < 6){
+		c++;
+	}
+	x->connections[c] = y;
 	x->numberOfConnections++;
+	printf("x # of connections after connecting: %d\n", x->numberOfConnections);
+	printf("y # of connections after connecting: %d\n", y->numberOfConnections);
 }
 
 //Returns true if rooms x and y are the same room, false otherwise
@@ -189,10 +210,13 @@ void AddRandomConnection(struct room *roomArray[]){
 	while(true){
 		printf("Entered while loop for AddRandomConnection\n"); fflush(stdout);
 		x = GetRandomRoom(roomArray);
-
+		//int i;
+		//for(i = 0; i < 7; i++){
+		//x = roomArray[i];
 		if(CanAddConnectionFrom(x) == true){
 			break;
 		}
+		
 	}
 
 	//Get another room that is not connected to x, can connect to x and is not same
@@ -211,19 +235,25 @@ void AddRandomConnection(struct room *roomArray[]){
 
 int main(){
 	printf("Starting main\n");fflush(stdout);  //comment out 
+
 	srand(time(NULL));
-	struct stat st;
+	//struct stat st;
+
 	//initialize array of rooms
 	struct room *roomsArray[7];
-	int a;
-	for(a = 0; a < 7; a++){
-		roomsArray[a]= (struct room *)malloc(sizeof(struct room));
-	}	
+
+	//int a;
+	//for(a = 0; a < 7; a++){
+	//	roomsArray[a]= (struct room *)malloc(sizeof(struct room));
+	//}	
+	//
 	printf("array of rooms created\n"); fflush(stdout); //comment out 
+
 	//initialize rooms
 	createRoom(roomsArray, roomNames, roomType);
 		
 	printf("createRoom function finished running\n"); fflush(stdout); //comment out 
+
 	//create graph with connections
 	while(IsGraphFull(roomsArray) == false){
 		AddRandomConnection(roomsArray);
